@@ -1,0 +1,126 @@
+<html>
+  <head>
+    <title>The Solar System</title>
+  </head>
+  <body>
+    <canvas id="maincanvas"></canvas>
+    <script>
+var canvas = document.getElementById("maincanvas");
+canvas.addEventListener("mousewheel", mouseWheel);
+canvas.addEventListener("mousedown",  mouseDown);
+canvas.addEventListener("mouseup",    mouseUp);
+canvas.addEventListener("mousemove",  mouseMove);
+
+var ctx         = canvas.getContext("2d");
+var scale       = 1/500000000;
+var distance    = 0;
+var mouseIsDown = false;
+
+function refreshCanvas()
+{
+	ctx.canvas.width  = window.innerWidth - 50;
+	ctx.canvas.height = window.innerHeight - 50;
+	ctx.fillStyle     = "#000000";
+	ctx.fillRect(0, 0, canvas.width, canvas.height);
+}
+
+function render()
+{
+	refreshCanvas();
+	for(var i=0; i < planets.length; i++)
+	{
+		var planet = planets[i];
+		if (planet.radius*scale <= 1)
+		{
+			ctx.beginPath();
+			ctx.arc((planet.distance + distance)*scale + canvas.width/2, canvas.height/2, 1, 0, 2*Math.PI);
+			ctx.fillStyle=planet.color;
+			ctx.fill();
+		} else {
+			if (planet.img)
+			{
+				ctx.drawImage(planet.img, (planet.distance + distance)*scale + canvas.width/2 - planet.radius*scale, canvas.height/2 - planet.radius*scale, 2*planet.radius*scale, 2*planet.radius*scale);
+			} else {
+				ctx.beginPath();
+				ctx.arc((planet.distance + distance)*scale + canvas.width/2, canvas.height/2, planet.radius*scale, 0, 2*Math.PI);
+				ctx.fillStyle = planet.color;
+				ctx.fill();
+			}
+		}
+		ctx.fillStyle=planet.color;
+		ctx.font="15px Arial";
+		ctx.fillText(planet.name, (planet.distance + distance)*scale + canvas.width/2 + planet.radius*scale + 10,canvas.height/2);
+	}
+	ctx.fillStyle="#FFFFFF";
+	ctx.font="15px Arial";
+	ctx.fillText("Scale: "+String(Math.floor(1/(10*scale))/100)+"km/pixel",10,20);
+	ctx.fillText("Distance from Sol: " + String(Math.floor(Math.abs(distance/10))/100) + "km (" + String(Math.floor(100*Math.abs(distance/earth.distance))/100) + " AU) (" + String(Math.floor(Math.abs(distance/9461E10))/100) + " light years)", 10, 40);
+}
+
+function mouseDown()
+{
+	mouseIsDown = true;
+}
+function mouseUp()
+{
+	mouseIsDown = false;
+}
+function mouseMove(e)
+{
+	if (mouseIsDown)
+	{
+		(distance += e.movementX/scale)
+	}
+}
+function mouseWheel(e)
+{
+	if (Math.max(-1, Math.min(1, e.wheelDelta)) < 0)
+	{
+		scale /= 1.1;
+	} else {
+		scale *= 1.1;
+	}
+}
+
+function Planet(name, distance, radius, color, imgUrl)
+{
+	this.name     = name;
+	this.distance = distance;
+	this.radius   = radius;
+	this.color    = color;
+	if (imgUrl)
+	{
+		this.img     = new Image;
+		this.img.src = imgUrl;
+	}
+}
+
+var sun      = new Planet("Sun",               0,            695508E3,"#FFF5F2", "https://upload.wikimedia.org/wikipedia/commons/5/54/Sun_white.jpg");
+var mercury  = new Planet("Mercury",           5790905E4,    2439700, "#AAAAAA", "https://upload.wikimedia.org/wikipedia/commons/d/d9/Mercury_in_color_-_Prockter07-edit1.jpg");
+var venus    = new Planet("Venus",             108208E6,     6051800, "#FFCC99", "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/Venus-real_color.jpg/260px-Venus-real_color.jpg");
+var earth    = new Planet("Earth",             149598023E3,  6371E3,  "#0000FF", "https://upload.wikimedia.org/wikipedia/commons/9/97/The_Earth_seen_from_Apollo_17.jpg");
+var iss      = new Planet("I.S.S.",            149604754E3,  67,      "#FFFFFF", "https://media.wired.com/photos/59269440f3e2356fd8009c32/1:1/w_2400,c_limit/ISS.jpg");
+var moon     = new Planet("Moon",              149982422E3,  1737100, "#AAAAAA", "https://upload.wikimedia.org/wikipedia/commons/e/e1/FullMoon2010.jpg");
+var mars     = new Planet("Mars",              2279392E5,    3389500, "#DA573A", "https://upload.wikimedia.org/wikipedia/commons/0/02/OSIRIS_Mars_true_color.jpg");
+var ceres    = new Planet("Ceres",             41401E7,      476200,  "#AAAAAA", "https://upload.wikimedia.org/wikipedia/commons/thumb/2/25/PIA21906-Ceres-DwarfPlanet-HighResolution-Dawn-20170920.jpg/600px-PIA21906-Ceres-DwarfPlanet-HighResolution-Dawn-20170920.jpg");
+var jupiter  = new Planet("Jupiter",           778412027E3,  69911E3, "#DE8572", "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Jupiter_and_its_shrunken_Great_Red_Spot.jpg/330px-Jupiter_and_its_shrunken_Great_Red_Spot.jpg");
+var io       = new Planet("Io",                7788338E5,    1821600, "#C4C43B", "https://upload.wikimedia.org/wikipedia/commons/7/7b/Io_highest_resolution_true_color.jpg");
+var europa   = new Planet("Europa",            7790831E5,    1560800, "#FF946C", "https://upload.wikimedia.org/wikipedia/commons/5/54/Europa-moon.jpg");
+var ganymede = new Planet("Ganymede",          7794824E5,    2634100, "#727272", "https://upload.wikimedia.org/wikipedia/commons/f/f2/Ganymede_g1_true-edit1.jpg");
+var callisto = new Planet("Callisto",          7802947E5,    2410300, "#A3A38B", "https://upload.wikimedia.org/wikipedia/commons/e/e9/Callisto.jpg");
+var saturn   = new Planet("Saturn",            142672541E4,  58232E3, "#FFD684", "https://sos.noaa.gov/ftp_mirror/astronomy/saturn/original/media/thumbnail_big.jpg");
+var titan    = new Planet("Titan",             142794728E4,  2575500, "#FFFF99", "https://upload.wikimedia.org/wikipedia/commons/4/45/Titan_in_true_color.jpg");
+var uranus   = new Planet("Uranus",            287097222E4,  25362E3, "#BBBBFF", "https://upload.wikimedia.org/wikipedia/commons/3/3d/Uranus2.jpg");
+var neptune  = new Planet("Neptune",           449825291E4,  24622E3, "#0000FF", "https://upload.wikimedia.org/wikipedia/commons/thumb/5/56/Neptune_Full.jpg/275px-Neptune_Full.jpg");
+var pluto    = new Planet("Pluto",             5906376272E3, 1188300, "#AAAAAA", "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Nh-pluto-in-true-color_2x_JPEG-edit-frame.jpg/225px-Nh-pluto-in-true-color_2x_JPEG-edit-frame.jpg");
+var haumea   = new Planet("Haumea",            64787E8,      816E3,   "#AAAAAA");
+var makemake = new Planet("Makemake",          6838867E6,    732E3,   "#AAAAAA");
+var eris     = new Planet("Eris",              10126E9,      1163E3,  "#AAAAAA");
+var cen      = new Planet("Proxima Centauri",  3991E13,      10728E4, "#FFAB34");
+var cenb     = new Planet("Proxima Centauri b",3991000726E7, 6825E3,  "#996633");
+var planets  = [sun, mercury, venus, iss, moon, earth, mars, ceres, io, europa, ganymede, callisto, jupiter, saturn, titan, uranus, neptune, pluto, haumea, makemake, eris, cenb, cen];
+
+setInterval(render, 20);
+    </script>
+  </body>
+</html>
