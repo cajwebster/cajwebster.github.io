@@ -12,8 +12,8 @@ canvas.addEventListener("mouseup",    mouseUp);
 canvas.addEventListener("mousemove",  mouseMove);
 
 var ctx         = canvas.getContext("2d");
-var scale       = 1/500000000;
-var distance    = 0;
+var scale       = 1/500000000; //scale in meters/pixel
+var distance    = 0;           //distance from sol in meters
 var mouseIsDown = false;
 
 function refreshCanvas()
