@@ -1,6 +1,7 @@
 var canvas = document.getElementById("maincanvas");
 canvas.addEventListener("mousedown", onclick);
 canvas.addEventListener("mousemove", mousemove);
+canvas.addEventListener("ontouchstart", onTouch);
 var ctx = canvas.getContext("2d");
 
 function alphaToColor(alpha)
@@ -26,6 +27,13 @@ function mousemove(e)
 function onclick(e)
 {
 	if (buttonHovered) location.href = "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
+}
+
+function onTouch(e)
+{
+	var touchPos = {x: e.touches[0].clientX, y: e.touches[0].clientY};
+	if (touchPos.x > buttonTopLeft.x && touchPos.x < buttonBottomRight.x &&
+		touchPos.y > buttonTopLeft.y && touchPos.y < buttonBottomRight.y) location.href = "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
 }
 
 var buttonTopLeft = {x: -50, y: 40};
