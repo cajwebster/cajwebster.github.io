@@ -74,6 +74,7 @@ function mouseMove(e)
 }
 function mouseWheel(e)
 {
+	console.log(e);
 	if (Math.max(-1, Math.min(1, e.wheelDelta)) < 0)
 	{
 		scale /= 1.1;
